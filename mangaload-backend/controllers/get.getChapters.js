@@ -6,10 +6,52 @@ const fetch = require('node-fetch')
  */
 async function getChapters (req, res) {
   const name = req.params.name
+  const link = `https://www.japscan.co/manga/${name}/`
 
-  
+  const response = await fetch(link)
+  const html = await response.text()
 
-  res.json({})
+  let indexStart = html.indexOf('<div id="chapters_list">')
+  let indexEnd = html.indexOf('<div id="sidebar" class="col-md-4">')
+
+  const chaptersHtml = html.substring(indexStart, indexEnd)
+
+  let chapters = []
+  const offset = 57
+  indexStart = 0
+  indexEnd = 0
+
+  do {
+    indexStart = chaptersHtml.indexOf('<div class="chapters_list text-truncate">', indexEnd)
+    indexEnd = chaptersHtml.indexOf('</div>', indexStart)
+
+    // Stop if index not find
+    if (indexStart === -1 || indexEnd === -1) break;
+
+    // Chapter block
+    const t = chaptersHtml.substring(indexStart, indexEnd)
+
+    // Retrieve title
+    let iS = t.indexOf('<a class="text-dark" href="/lecture-en-ligne/') + offset
+    let iE = t.indexOf('</a>')
+    
+    const title = t.substring(iS, iE).replace(/\t/g, '').replace(/\n/g, '').replace(/&#039;/g, '\'')
+
+    // Retrieve link
+    iS = t.indexOf('<a class="text-dark" href="') + '<a class="text-dark" href="'.length
+    iE = t.indexOf('"', iS)
+
+    const link = 'https://www.japscan.co' + t.substring(iS, iE)
+
+    // Retrieve chapter number
+    iS = link.search(/\/([0-9]+)\//g) + 1
+    const ch = link.substring(iS, link.length - 1)
+
+    chapters.push({title: title, link: link, ch: ch})
+
+  } while (indexStart != -1 || indexEnd != -1)
+
+  res.json(chapters)
 }
 
 module.exports = getChapters

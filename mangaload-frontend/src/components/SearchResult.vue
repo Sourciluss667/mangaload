@@ -1,6 +1,6 @@
 <template>
   <div>
-    <router-link to="/">Back</router-link>
+  <router-link to="/" class="icon-link" style="margin-left: 1%;text-decoration: none;"><i class="fas fa-home"></i> Home</router-link>
     <div class="titleSearchResult">
       <h1>Recherche de : {{ searchName }}</h1>
     </div>
@@ -8,8 +8,12 @@
     <div class="grid-result">
       <div class="cards">
         <div class="card" v-for="(result, index) in searchResult" v-bind:key="index">
-          <img :src="result.img" referrerpolicy="no-referrer" />
-          <p>{{ result.displayName }}</p>
+          <img :src="result.img" referrerpolicy="no-referrer" :title="'de ' + result.mangakas" v-on:click="goToDownloadPage(result.name, result.displayName)" style="cursor: pointer;" />
+          <p style="margin-top: 0px;">
+            {{ result.displayName }}
+            <br>
+            <a :href="result.url" target="_blank" style="text-decoration: none;" title="Voir sur JAPSCAN">JAPSCAN</a>
+          </p>
         </div>
       </div>
     </div>
@@ -26,6 +30,11 @@ export default {
     return {
       searchName: '',
       searchResult: []
+    }
+  },
+  methods: {
+    goToDownloadPage (name, displayName) {
+      this.$router.push('/download/' + name + '/' + displayName)
     }
   },
   created: async function () {

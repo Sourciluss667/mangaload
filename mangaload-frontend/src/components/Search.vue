@@ -44,7 +44,6 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
 p {
-  margin-top: 30px;
   color: #ffffff;
 }
 .cntr {
