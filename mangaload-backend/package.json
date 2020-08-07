@@ -1,0 +1,28 @@
+{
+  "name": "mangaload-backend",
+  "version": "1.0.0",
+  "description": "MangaLoad backend",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon bin/index.js"
+  },
+  "keywords": [
+    "backend",
+    "manga",
+    "download",
+    "japscan"
+  ],
+  "author": "Sourciluss667",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "debug": "^4.1.1",
+    "express": "^4.17.1",
+    "fs": "0.0.1-security",
+    "http": "0.0.1-security",
+    "morgan": "^1.10.0",
+    "node-fetch": "^2.6.0",
+    "puppeteer": "^5.2.1"
+  }
+}

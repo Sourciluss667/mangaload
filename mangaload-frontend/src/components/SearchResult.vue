@@ -1,0 +1,74 @@
+<template>
+  <div>
+    <router-link to="/">Back</router-link>
+    <div class="titleSearchResult">
+      <h1>Recherche de : {{ searchName }}</h1>
+    </div>
+
+    <div class="grid-result">
+      <div class="cards">
+        <div class="card" v-for="(result, index) in searchResult" v-bind:key="index">
+          <img :src="result.img" referrerpolicy="no-referrer" />
+          <p>{{ result.displayName }}</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</template>
+
+<script>
+import { URL_BACKEND } from '../config.js'
+
+export default {
+  name: 'SearchResult',
+  data () {
+    return {
+      searchName: '',
+      searchResult: []
+    }
+  },
+  created: async function () {
+    this.searchName = this.$route.params.name
+    let searchResult = await fetch(`${URL_BACKEND}/japscan/searchManga/${this.searchName}`)
+    searchResult = await searchResult.text()
+    searchResult = JSON.parse(searchResult)
+
+    searchResult.forEach(e => {
+      let name = e.url.substring('/manga/'.length, e.url.length - 1)
+      this.searchResult.push({displayName: e.name, name: name, url: `https://www.japscan.co${e.url}`, img: `https://www.japscan.co/imgs/mangas/${name}.jpg`, mangakas: e.mangakas})
+    }) // img => 180x250
+  }
+}
+</script>
+
+<style>
+.titleSearchResult {
+  text-align: center;
+}
+
+.grid-result {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.card {
+  color: white;
+  padding: 1rem;
+  height: 300px;
+}
+
+.cards {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-gap: 1rem;
+}
+
+@media (min-width: 600px) {
+  .cards { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 900px) {
+  .cards { grid-template-columns: repeat(4, 1fr); }
+}
+</style>
