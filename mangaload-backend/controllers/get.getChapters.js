@@ -17,7 +17,6 @@ async function getChapters (req, res) {
   const chaptersHtml = html.substring(indexStart, indexEnd)
 
   let chapters = []
-  const offset = 57
   indexStart = 0
   indexEnd = 0
 
@@ -32,7 +31,8 @@ async function getChapters (req, res) {
     const t = chaptersHtml.substring(indexStart, indexEnd)
 
     // Retrieve title
-    let iS = t.indexOf('<a class="text-dark" href="/lecture-en-ligne/') + offset
+    let iS = t.indexOf('<a class="text-dark" href="/lecture-en-ligne/')
+    iS = t.indexOf('">', iS) + 2
     let iE = t.indexOf('</a>')
     
     const title = t.substring(iS, iE).replace(/\t/g, '').replace(/\n/g, '').replace(/&#039;/g, '\'')
