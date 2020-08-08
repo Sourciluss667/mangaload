@@ -35,7 +35,7 @@ async function postDownload (req, res) {
 
   // UTILISER info.chapters POUR SELECT LES BONS CHAPITRES !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   info.chapters.forEach(e => {
-    archive.directory(`downloads/${info.name}/ch${e}/`, `ch${info.chapter}`)
+    archive.directory(`downloads/${info.name}/ch${e}/`, `ch${e}`)
   })
   
   archive.finalize()
