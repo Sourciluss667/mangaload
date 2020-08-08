@@ -8,12 +8,14 @@ const archiver = require('archiver')
 async function postDownload (req, res) {
   // name, chapters
   const info = req.body
-  console.log('finish download')
-  console.log(info)
 
   let waitArchive = true
   const fileName = info.name + '-' + Math.floor(Math.random() * 1001)
   const pathFile = 'archives/' + fileName + '.zip'
+
+  if (!fs.existsSync('archives')) {
+    fs.mkdirSync('archives')
+  }
 
   const output = fs.createWriteStream(pathFile)
   var archive = archiver('zip', {
@@ -21,8 +23,6 @@ async function postDownload (req, res) {
   })
 
   output.on('close', function () {
-    console.log(archive.pointer() + ' total bytes')
-    console.log('archiver has been finalized and the output file descriptor has closed.')
     waitArchive = false
   })
 
@@ -33,7 +33,10 @@ async function postDownload (req, res) {
 
   archive.pipe(output)
 
-  archive.directory(`downloads/${info.name}/`, false)
+  // UTILISER info.chapters POUR SELECT LES BONS CHAPITRES !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  info.chapters.forEach(e => {
+    archive.directory(`downloads/${info.name}/ch${e}/`, `ch${info.chapter}`)
+  })
   
   archive.finalize()
 

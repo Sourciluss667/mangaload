@@ -64,7 +64,7 @@
     <!-- Download details -->
     <div class="ft-dl-details dl-details-inactive" id="footer-download-details">
       <br><br>
-      <div v-for="(el, index) in downloadState" v-bind:key="index" style="margin-bottom: 10px;"> <!-- chapter: chapter, pageCount: pageCount, lastPageDownloaded: 0 -->
+      <div v-for="(el, index) in downloadState" v-bind:key="index" style="margin-bottom: 10px;" :id="'div-' + el.chapter"> <!-- chapter: chapter, pageCount: pageCount, lastPageDownloaded: 0 -->
         Chapitre {{ el.chapter }} <div class="progress"><div class="progress-value" :id="'progress-' + el.chapter"></div></div> {{ el.lastPageDownloaded }} / {{ el.pageCount }}
       </div>
       <br><br>
@@ -211,6 +211,9 @@ export default {
     },
     downloadState: function (dlState) {
       dlState.forEach(e => {
+        if (e.error) {
+          document.getElementById('div-' + e.chapter).style.color = 'red'
+        }
         const progressBar = document.getElementById('progress-' + e.chapter)
         const percent = (100 * e.lastPageDownloaded) / e.pageCount
         if (progressBar !== null && `${percent}%` !== progressBar.style.width) {

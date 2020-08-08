@@ -51,7 +51,7 @@ const downloadChapter = async function (mangaName, chapter, browser, i = -1) {
 
   for (let i = 0; i < downloading.length; i++) {
     if (downloading[i].name === mangaName) {
-      downloading[i].status.push({chapter: chapter, pageCount: pageCount, lastPageDownloaded: 0})
+      downloading[i].status.push({chapter: chapter, pageCount: pageCount, lastPageDownloaded: 0, error: false})
     }
   }
 
@@ -94,6 +94,15 @@ const downloadChapter = async function (mangaName, chapter, browser, i = -1) {
   })
 
   } catch (e) {
+    for (let k = 0; k < downloading.length; k++) {
+      if (downloading[k].name === mangaName) {
+        for (let j = 0; j < downloading[k].status.length; j++) {
+          if (downloading[k].status[j].chapter === chapter) {
+            downloading[k].status[j].error = true
+          }
+        }
+      }
+    }
     console.log('\n\x1b[31mError download chapter ' + chapter + ' !\x1b[0m\n')
     console.error(e)
   }
