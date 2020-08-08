@@ -1,5 +1,8 @@
 <template>
 <div>
+  <div class="downloadpopup" id="downloadpopup">
+    <a :href="urlZip" target="_blank" style="color: #fff;font-size: 25px;position: fixed;top: 50%;transform: translate(-50%, -50%);" v-on:click="restart()">Télécharger l'archive ZIP</a>
+  </div>
   <router-link to="/" class="icon-link" style="margin-left: 1%;text-decoration: none;"><i class="fas fa-home"></i> Home</router-link>
   <div style="text-align: center;">
     <h1>Liste des chapitres</h1>
@@ -44,7 +47,7 @@
           En cours... <a v-on:click="showDownloadingDetails()"><i class="fas fa-angle-double-up icon-link" id="showDetailsIcon"></i></a>
         </span>
         <span v-else-if="statut === 2" style="color: green;">
-          Fini !
+          Finalisation... <a v-on:click="showDownloadingDetails()"><i class="fas fa-angle-double-up icon-link" id="showDetailsIcon"></i></a>
         </span>
         <span v-else-if="statut === -1" style="color: red;">
           Error !
@@ -83,7 +86,8 @@ export default {
       queue: [],
       statut: 0,
       intervalID: undefined,
-      downloadState: []
+      downloadState: [],
+      urlZip: ''
     }
   },
   methods: {
@@ -143,14 +147,36 @@ export default {
         icon.classList.remove('fa-angle-double-down')
         icon.classList.add('fa-angle-double-up')
       }
+    },
+    restart () {
+      document.getElementById('downloadpopup').style.display = 'none'
+      // this.urlZip = ''
+      this.queue = []
+      this.statut = 0
+      this.intervalID = undefined
+      this.downloadState = []
+
+      // Details download
+      const footer = document.getElementById('download-bar')
+      const details = document.getElementById('footer-download-details')
+      const icon = document.getElementById('showDetailsIcon')
+      footer.style.height = '50px'
+      details.classList.remove('dl-details-active')
+      details.classList.add('dl-details-inactive')
+      icon.classList.remove('fa-angle-double-down')
+      icon.classList.add('fa-angle-double-up')
+
+      // Popup Queue
+      const e = document.getElementById('popup-queue')
+      e.classList.remove('popup-active')
+      e.classList.add('popup-inactive')
     }
   },
   watch: {
-    statut: function (s) {
+    statut: async function (s) {
       if (s === 1) {
         // Check le dl ici
         this.intervalID = setInterval(async function () {
-          console.log('name: ' + this.name)
           const response = await fetch(`${URL_BACKEND}/japscan/downloadStatus/${this.name}`)
           const info = await response.json()
           if (info.chapters.length === 0) {
@@ -161,13 +187,33 @@ export default {
       } else if (s === 2) {
         // stoppé le check
         clearInterval(this.intervalID)
+        // Lancé download
+        const info = {name: this.name, chapters: this.queue}
+
+        const response = await fetch(`${URL_BACKEND}/japscan/download`, {
+          method: 'POST',
+          body: JSON.stringify(info),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+
+        if (response.status === 200) {
+          const r = await response.json()
+          // POPUP TELECHARGER LE ZIP
+          document.getElementById('downloadpopup').style.display = 'block'
+          this.urlZip = `${URL_BACKEND}/japscan/download/${r.fileName}`
+        } else {
+          console.log('ERROR')
+          console.log(response)
+        }
       }
     },
     downloadState: function (dlState) {
       dlState.forEach(e => {
         const progressBar = document.getElementById('progress-' + e.chapter)
         const percent = (100 * e.lastPageDownloaded) / e.pageCount
-        if (`${percent}%` !== progressBar.style.width) {
+        if (progressBar !== null && `${percent}%` !== progressBar.style.width) {
           progressBar.animate({
             width: [progressBar.style.width, `${percent}%`]
           }, {duration: 3000, iterations: 1})
@@ -291,5 +337,16 @@ export default {
   background: #fff;
   height: 12px;
   width: 0;
+}
+
+.downloadpopup {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  display: none;
+  text-align: center;
+  z-index: 420;
 }
 </style>
