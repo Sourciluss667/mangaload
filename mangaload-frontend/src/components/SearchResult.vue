@@ -44,8 +44,8 @@ export default {
     searchResult = JSON.parse(searchResult)
 
     searchResult.forEach(e => {
-      let name = e.url.substring('/manga/'.length, e.url.length - 1)
-      this.searchResult.push({displayName: e.name, name: name, url: `https://www.japscan.co${e.url}`, img: `https://www.japscan.co/imgs/mangas/${name}.jpg`, mangakas: e.mangakas})
+      const name = e.url.substring('/manga/'.length, e.url.length - 1)
+      this.searchResult.push({ displayName: e.name, name: name, url: `https://www.japscan.co${e.url}`, img: `https://www.japscan.co/imgs/mangas/${name}.jpg`, mangakas: e.mangakas })
     }) // img => 180x250
   }
 }

@@ -12,13 +12,13 @@
       <div v-for="(chapter, index) in chapters" v-bind:key="index">
         <p v-if="!queue.includes(chapter.ch)">
           {{ chapter.title }}
-          <a :href="chapter.link" target="_blank" class="icon-link" title="Voir sur JAPSCAN"><i class="fas fa-share-square"></i></a>
+          <a :href="chapter.link" target="_blank" class="icon-link" title="Voir sur JAPSCAN"><i class="fas fa-share-square"></i></a>&nbsp;
           <a class="icon-link" title="Ajouter aux téléchargements !" v-on:click="addQueue(chapter.ch)"><i class="fas fa-file-download"></i></a>
         </p>
 
         <p v-else class="added">
           {{ chapter.title }}
-          <a :href="chapter.link" target="_blank" class="icon-link" title="Voir sur JAPSCAN"><i class="fas fa-share-square"></i></a>
+          <a :href="chapter.link" target="_blank" class="icon-link" title="Voir sur JAPSCAN"><i class="fas fa-share-square"></i></a>&nbsp;
           <a class="icon-link" title="Retirer des téléchargements !" v-on:click="removeQueue(chapter.ch)"><i class="fas fa-trash-alt"></i></a>
         </p>
       </div>
@@ -115,7 +115,7 @@ export default {
     async startDownload () {
       this.statut = 1
 
-      const info = {name: this.name, chapters: this.queue}
+      const info = { name: this.name, chapters: this.queue }
 
       const response = await fetch(`${URL_BACKEND}/japscan/startDownload`, {
         method: 'POST',
@@ -188,7 +188,7 @@ export default {
         // stoppé le check
         clearInterval(this.intervalID)
         // Lancé download
-        const info = {name: this.name, chapters: this.queue}
+        const info = { name: this.name, chapters: this.queue }
 
         const response = await fetch(`${URL_BACKEND}/japscan/download`, {
           method: 'POST',
@@ -219,7 +219,7 @@ export default {
         if (progressBar !== null && `${percent}%` !== progressBar.style.width) {
           progressBar.animate({
             width: [progressBar.style.width, `${percent}%`]
-          }, {duration: 3000, iterations: 1})
+          }, { duration: 3000, iterations: 1 })
           progressBar.style.width = `${percent}%`
         }
       })
