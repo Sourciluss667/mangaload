@@ -105,6 +105,7 @@ const downloadChapter = async function (mangaName, chapter, browser, i = -1) {
     }
     console.log('\n\x1b[31mError download chapter ' + chapter + ' !\x1b[0m\n')
     console.error(e)
+    throw new Error('Error in download !!!!!')
   }
 }
 
