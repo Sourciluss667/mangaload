@@ -43,8 +43,16 @@ async function getChapters (req, res) {
 
     const link = 'https://www.japscan.co' + t.substring(iS, iE)
 
+    // Check if VOLUME or CHAPTER
+    if (link.search('/volume-') !== -1) {
+      // It's a volume
+      iS = link.search(/\/volume-([0-9]+)\//g) + 1
+    } else {
+      // It's a chapter
+      iS = link.search(/\/([0-9]+)\//g) + 1
+    }
+
     // Retrieve chapter number
-    iS = link.search(/\/([0-9]+)\//g) + 1
     const ch = link.substring(iS, link.length - 1)
 
     chapters.push({title: title, link: link, ch: ch})
