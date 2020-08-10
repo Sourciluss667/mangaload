@@ -30,7 +30,7 @@ async function downloadChapter (mangaName, chapter, browser, i = -1) {
   try {
   const link = `https://www.japscan.co/lecture-en-ligne/${mangaName}/${chapter}/`
   const path = `downloads/${mangaName}/ch${chapter}`
-  const startPage = 1
+  let startPage = 1
 
   if (!fs.existsSync('downloads')) {
     fs.mkdirSync('downloads')
