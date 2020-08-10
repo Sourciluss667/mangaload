@@ -88,11 +88,14 @@ async function downloadChapter (mangaName, chapter, browser, i = -1) {
 }
 
 async function downloadPage (mangaName, chapter, page, link, path, i) {
-  await retry(`${link}${i}.html`, 3, () => page.goto(`${link}${i}.html`, {waitUntil: 'networkidle0', timeout: 10000}))
+  console.log(`${link}${i}.html loading start`)
 
+  await retry(`${link}${i}.html`, 3, () => page.goto(`${link}${i}.html`, {waitUntil: 'networkidle0', timeout: 10000}))
   await page.waitForSelector('#image')
   const image = await page.$('#image')
   const box = await image.boundingBox()
+
+  console.log(`${link}${i}.html loading work !`)
 
   const x = box['x']
   const y = box['y']
@@ -113,8 +116,6 @@ async function downloadPage (mangaName, chapter, page, link, path, i) {
 }
 
 async function retry (name, maxRetries, fn) {
-  console.log('fn is')
-  console.log(fn)
   return await fn().catch(async function(err) { 
     if (maxRetries <= 0) {
       console.log('error loading page after 3 retries !!')
