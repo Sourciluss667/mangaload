@@ -92,21 +92,20 @@ async function downloadChapter (mangaName, chapter, browser, i = -1) {
 }
 
 async function downloadPage (mangaName, chapter, page, link, path, i) {
-  console.log(`${link}${i}.html loading start`)
-
   await retry(`${link}${i}.html`, 3, () => page.goto(`${link}${i}.html`, {waitUntil: 'networkidle0', timeout: 10000}))
   await page.waitForSelector('#image')
   const image = await page.$('#image')
   const box = await image.boundingBox()
-
-  console.log(`${link}${i}.html loading work !`)
-
   // SE PASSE UNE COUILLES APRES CA !!
 
   const x = box['x']
   const y = box['y']
   const w = box['width']
   const h = box['height']
+
+  console.log(`x: ${x}; y: ${y}; w: ${w}; h: ${h}`)
+  console.log('-----------------------')
+  
 
   await page.screenshot({'path': `${path}/${i}.png`, 'clip': {'x': x, 'y': y, 'width': w, 'height': h}})
 
