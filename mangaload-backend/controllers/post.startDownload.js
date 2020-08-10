@@ -26,7 +26,7 @@ async function startDownload (req, res) {
   res.sendStatus(200)
 }
 
-const downloadChapter = async function (mangaName, chapter, browser, i = -1) {
+async function downloadChapter (mangaName, chapter, browser, i = -1) {
   try {
   const link = `https://www.japscan.co/lecture-en-ligne/${mangaName}/${chapter}/`
   const path = `downloads/${mangaName}/ch${chapter}`
@@ -60,9 +60,7 @@ const downloadChapter = async function (mangaName, chapter, browser, i = -1) {
   await page.setDefaultNavigationTimeout(0)
 
   for (let i = 1; i <= pageCount; i++) {
-    await retry(`downloadPage${i}`, 3, async function () {
-      await downloadPage(pmangaName, chapter, page, link, path, i)
-    })
+    await retry(`downloadPage${i}`, 3, () => downloadPage(pmangaName, chapter, page, link, path, i))
   }
   // Chapter finish download
   await page.close()
@@ -90,9 +88,7 @@ const downloadChapter = async function (mangaName, chapter, browser, i = -1) {
 }
 
 async function downloadPage (mangaName, chapter, page, link, path, i) {
-  await retry(`${link}${i}.html`, 3, async function () {
-    await page.goto(`${link}${i}.html`, {waitUntil: 'networkidle0', timeout: 10000})
-  })
+  await retry(`${link}${i}.html`, 3, () => page.goto(`${link}${i}.html`, {waitUntil: 'networkidle0', timeout: 10000}))
 
   await page.waitForSelector('#image')
   const image = await page.$('#image')
