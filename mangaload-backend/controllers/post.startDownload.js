@@ -60,7 +60,7 @@ const downloadChapter = async function (mangaName, chapter, browser, i = -1) {
   await page.setDefaultNavigationTimeout(0)
 
   for (let i = 1; i <= pageCount; i++) {
-    await retry('downloadPage' + i, 3, async function () {
+    await retry(`downloadPage${i}`, 3, async function () {
       await downloadPage(pmangaName, chapter, page, link, path, i)
     })
   }
@@ -117,6 +117,8 @@ async function downloadPage (mangaName, chapter, page, link, path, i) {
 }
 
 async function retry (name, maxRetries, fn) {
+  console.log('fn is')
+  console.log(fn)
   return await fn().catch(async function(err) { 
     if (maxRetries <= 0) {
       console.log('error loading page after 3 retries !!')
