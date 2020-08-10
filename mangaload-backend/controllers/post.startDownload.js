@@ -117,6 +117,7 @@ async function retry(maxRetries, fn) {
       console.log('error loading page after 3 retries !!')
       throw err
     }
+    await new Promise(r => setTimeout(r, 10000));
     return retry(maxRetries - 1, fn)
   })
 }
