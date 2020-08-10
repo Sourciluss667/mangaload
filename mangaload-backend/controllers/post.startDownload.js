@@ -112,7 +112,7 @@ const downloadChapter = async function (mangaName, chapter, browser, i = -1) {
 }
 
 async function retry(maxRetries, fn) {
-  return await fn().catch(function(err) { 
+  return await fn().catch(async function(err) { 
     if (maxRetries <= 0) {
       console.log('error loading page after 3 retries !!')
       throw err
