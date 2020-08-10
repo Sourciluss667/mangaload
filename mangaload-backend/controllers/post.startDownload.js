@@ -60,7 +60,7 @@ async function downloadChapter (mangaName, chapter, browser, i = -1) {
   await page.setDefaultNavigationTimeout(0)
 
   for (let i = 1; i <= pageCount; i++) {
-    await retry(`downloadPage${i}`, 3, () => downloadPage(pmangaName, chapter, page, link, path, i))
+    await retry(`downloadPage${i}`, 3, () => downloadPage(mangaName, chapter, page, link, path, i))
   }
   // Chapter finish download
   await page.close()
