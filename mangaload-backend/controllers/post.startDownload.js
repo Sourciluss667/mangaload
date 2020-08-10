@@ -30,6 +30,7 @@ async function downloadChapter (mangaName, chapter, browser, i = -1) {
   try {
   const link = `https://www.japscan.co/lecture-en-ligne/${mangaName}/${chapter}/`
   const path = `downloads/${mangaName}/ch${chapter}`
+  const startPage = 1
 
   if (!fs.existsSync('downloads')) {
     fs.mkdirSync('downloads')
@@ -39,6 +40,9 @@ async function downloadChapter (mangaName, chapter, browser, i = -1) {
   }
   if (!fs.existsSync(path)){
     fs.mkdirSync(path);
+  } else {
+    const filesObj = fs.readdirSync(path)
+    startPage = filesObj.length
   }
 
   const res = await fetch(`${link}1.html`)
@@ -59,7 +63,7 @@ async function downloadChapter (mangaName, chapter, browser, i = -1) {
   await page.setViewport({width: 3840, height: 16000})
   await page.setDefaultNavigationTimeout(0)
 
-  for (let i = 1; i <= pageCount; i++) {
+  for (let i = startPage; i <= pageCount; i++) {
     await retry(`downloadPage${i}`, 3, () => downloadPage(mangaName, chapter, page, link, path, i))
   }
   // Chapter finish download
@@ -96,6 +100,8 @@ async function downloadPage (mangaName, chapter, page, link, path, i) {
   const box = await image.boundingBox()
 
   console.log(`${link}${i}.html loading work !`)
+
+  // SE PASSE UNE COUILLES APRES CA !!
 
   const x = box['x']
   const y = box['y']
