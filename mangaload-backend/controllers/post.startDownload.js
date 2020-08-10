@@ -28,7 +28,7 @@ async function startDownload (req, res) {
 
 const downloadChapter = async function (mangaName, chapter, browser, i = -1) {
   try {
-    const link = `https://www.japscan.co/lecture-en-ligne/${mangaName}/${chapter}/`
+  const link = `https://www.japscan.co/lecture-en-ligne/${mangaName}/${chapter}/`
   const path = `downloads/${mangaName}/ch${chapter}`
 
   if (!fs.existsSync('downloads')) {
@@ -60,31 +60,9 @@ const downloadChapter = async function (mangaName, chapter, browser, i = -1) {
   await page.setDefaultNavigationTimeout(0)
 
   for (let i = 1; i <= pageCount; i++) {
-    
-    await retry(3, async function () {
-      await page.goto(`${link}${i}.html`, {waitUntil: 'networkidle0', timeout: 10000})
+    await retry('downloadPage' + i, 3, async function () {
+      await downloadPage(pmangaName, chapter, page, link, path, i)
     })
-
-    await page.waitForSelector('#image')
-    const image = await page.$('#image')
-    const box = await image.boundingBox()
-
-    const x = box['x']
-    const y = box['y']
-    const w = box['width']
-    const h = box['height']
-
-    await page.screenshot({'path': `${path}/${i}.png`, 'clip': {'x': x, 'y': y, 'width': w, 'height': h}})
-
-    for (let k = 0; k < downloading.length; k++) {
-      if (downloading[k].name === mangaName) {
-        for (let j = 0; j < downloading[k].status.length; j++) {
-          if (downloading[k].status[j].chapter === chapter) {
-            downloading[k].status[j].lastPageDownloaded = i
-          }
-        }
-      }
-    }
   }
   // Chapter finish download
   await page.close()
@@ -111,12 +89,40 @@ const downloadChapter = async function (mangaName, chapter, browser, i = -1) {
   }
 }
 
-async function retry(maxRetries, fn) {
+async function downloadPage (mangaName, chapter, page, link, path, i) {
+  await retry(`${link}${i}.html`, 3, async function () {
+    await page.goto(`${link}${i}.html`, {waitUntil: 'networkidle0', timeout: 10000})
+  })
+
+  await page.waitForSelector('#image')
+  const image = await page.$('#image')
+  const box = await image.boundingBox()
+
+  const x = box['x']
+  const y = box['y']
+  const w = box['width']
+  const h = box['height']
+
+  await page.screenshot({'path': `${path}/${i}.png`, 'clip': {'x': x, 'y': y, 'width': w, 'height': h}})
+
+  for (let k = 0; k < downloading.length; k++) {
+    if (downloading[k].name === mangaName) {
+      for (let j = 0; j < downloading[k].status.length; j++) {
+        if (downloading[k].status[j].chapter === chapter) {
+          downloading[k].status[j].lastPageDownloaded = i
+        }
+      }
+    }
+  }
+}
+
+async function retry (name, maxRetries, fn) {
   return await fn().catch(async function(err) { 
     if (maxRetries <= 0) {
       console.log('error loading page after 3 retries !!')
       throw err
     }
+    console.log('Retry ' + name + '!')
     await new Promise(r => setTimeout(r, 10000));
     return retry(maxRetries - 1, fn)
   })
