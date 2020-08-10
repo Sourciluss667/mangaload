@@ -61,7 +61,9 @@ const downloadChapter = async function (mangaName, chapter, browser, i = -1) {
 
   for (let i = 1; i <= pageCount; i++) {
     
-    await page.goto(`${link}${i}.html`, {waitUntil: 'load'})
+    await retry(3, async function () {
+      await page.goto(`${link}${i}.html`, {waitUntil: 'networkidle0', timeout: 10000})
+    })
 
     await page.waitForSelector('#image')
     const image = await page.$('#image')
@@ -107,6 +109,16 @@ const downloadChapter = async function (mangaName, chapter, browser, i = -1) {
     console.error(e)
     throw new Error('Error in download !!!!!')
   }
+}
+
+async function retry(maxRetries, fn) {
+  return await fn().catch(function(err) { 
+    if (maxRetries <= 0) {
+      console.log('error loading page after 3 retries !!')
+      throw err
+    }
+    return retry(maxRetries - 1, fn)
+  })
 }
 
 module.exports = {startDownload, downloading}
