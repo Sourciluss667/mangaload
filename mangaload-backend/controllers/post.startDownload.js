@@ -1,5 +1,6 @@
 const fetch = require('node-fetch')
 const fs = require('fs')
+const config = require('../config.js')
 const puppeteer = require('puppeteer-extra')
 const StealthPlugin = require('puppeteer-extra-plugin-stealth')
 puppeteer.use(StealthPlugin())
@@ -17,7 +18,13 @@ async function startDownload (req, res) {
 
   downloading.push({name: info.name, chapters: info.chapters, status: []})
 
-  const browser = await puppeteer.launch({headless: true})
+  let params = { headless: true }
+
+  if (process.platform === 'darwin') {
+    params.executablePath = '/Applications/Chromium.app/Contents/MacOS/Chromium'
+  }
+
+  const browser = await puppeteer.launch(params)
 
   for (let i = info.chapters.length - 1; i >= 0; i--) {
     downloadChapter(info.name, info.chapters[i], browser)
@@ -28,7 +35,7 @@ async function startDownload (req, res) {
 
 const downloadChapter = async function (mangaName, chapter, browser, i = -1) {
   try {
-    const link = `https://www.japscan.co/lecture-en-ligne/${mangaName}/${chapter}/`
+    const link = `${config.JAPSCAN_URL}/lecture-en-ligne/${mangaName}/${chapter}/`
   const path = `downloads/${mangaName}/ch${chapter}`
 
   if (!fs.existsSync('downloads')) {

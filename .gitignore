@@ -1,4 +1,6 @@
 mangaload-backend/node_modules
 mangaload-backend/package-lock.json
+mangaload-backend/downloads
+mangaload-backend/archives
 mangaload-frontend/node_modules
 mangaload-frontend/package-lock.json

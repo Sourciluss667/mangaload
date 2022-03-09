@@ -1,4 +1,5 @@
 const fetch = require('node-fetch')
+const config = require('../config.js')
 
 /**
  * @param {import('express').Request} req
@@ -6,7 +7,7 @@ const fetch = require('node-fetch')
  */
 async function getChapters (req, res) {
   const name = req.params.name
-  const link = `https://www.japscan.co/manga/${name}/`
+  const link = `${config.JAPSCAN_URL}/manga/${name}/`
 
   const response = await fetch(link)
   const html = await response.text()
@@ -41,7 +42,7 @@ async function getChapters (req, res) {
     iS = t.indexOf('<a class="text-dark" href="') + '<a class="text-dark" href="'.length
     iE = t.indexOf('"', iS)
 
-    const link = 'https://www.japscan.co' + t.substring(iS, iE)
+    const link = config.JAPSCAN_URL + t.substring(iS, iE)
 
     // Check if VOLUME or CHAPTER
     if (link.search('/volume-') !== -1) {

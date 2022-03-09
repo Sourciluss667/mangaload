@@ -2,6 +2,28 @@
 
 https://sourciluss.fr
 
+## Installation & Launch
+
+### Frontend
+
+```bash
+cd mangaload-frontend/
+npm install
+npm run serve
+```
+
+### Backend
+
+Pre-requisites :
+
+If MacOS, install chromium-browser : brew install --cask chromium
+
+```bash
+cd mangaload-backend/
+npm install
+npm start
+```
+
 ## Versions
 
 Version 1.0

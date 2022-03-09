@@ -1,4 +1,5 @@
 const fetch = require('node-fetch')
+const config = require('./config.js')
 const prompts = require('prompts')
 const fs = require('fs')
 
@@ -14,7 +15,7 @@ const main = async function () {
   // https://www.japscan.co/live-search/ <-- USE THIS TO SEARCH MANGA
   const mangaName = await menu(0)
 
-  const link = `https://www.japscan.co/manga/${mangaName}/`
+  const link = `${config.JAPSCAN_URL}/manga/${mangaName}/`
 
   const res = await fetch(link)
   const html = await res.text()
@@ -146,7 +147,7 @@ const getChapters = html => {
     iS = t.indexOf('<a class="text-dark" href="') + '<a class="text-dark" href="'.length
     iE = t.indexOf('"', iS)
 
-    const link = 'https://www.japscan.co' + t.substring(iS, iE)
+    const link = config.JAPSCAN_URL + t.substring(iS, iE)
 
     // Retrieve chapter number
     iS = link.search(/\/([0-9]+)\//g) + 1
@@ -162,7 +163,7 @@ const getChapters = html => {
 
 const downloadChapter = async function (mangaName, chapter, browser, i = -1) {
   try {
-    const link = `https://www.japscan.co/lecture-en-ligne/${mangaName}/${chapter}/`
+    const link = `${config.JAPSCAN_URL}/lecture-en-ligne/${mangaName}/${chapter}/`
   const path = `downloads/${mangaName}/ch${chapter}`
 
   if (!fs.existsSync('downloads')) {

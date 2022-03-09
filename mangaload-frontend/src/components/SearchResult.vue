@@ -1,23 +1,43 @@
 <template>
   <div>
-  <router-link to="/" class="icon-link" style="margin-left: 1%;text-decoration: none;"><i class="fas fa-home"></i> Home</router-link>
+    <router-link
+      to="/"
+      class="icon-link"
+      style="margin-left: 1%; text-decoration: none"
+      ><i class="fas fa-home"></i> Home</router-link
+    >
     <div class="titleSearchResult">
       <h1>Recherche de : {{ searchName }}</h1>
     </div>
 
     <div class="grid-result">
       <div class="cards">
-        <div class="card" v-for="(result, index) in searchResult" v-bind:key="index">
-          <img :src="result.img" referrerpolicy="no-referrer" :title="'de ' + result.mangakas" v-on:click="goToDownloadPage(result.name, result.displayName)" style="cursor: pointer;" />
-          <p style="margin-top: 0px;">
+        <div
+          class="card"
+          v-for="(result, index) in searchResult"
+          v-bind:key="index"
+        >
+          <img
+            :src="result.img"
+            referrerpolicy="no-referrer"
+            :title="'de ' + result.mangakas"
+            v-on:click="goToDownloadPage(result.name, result.displayName)"
+            style="cursor: pointer"
+          />
+          <p style="margin-top: 0px">
             {{ result.displayName }}
-            <br>
-            <a :href="result.url" target="_blank" style="text-decoration: none;" title="Voir sur JAPSCAN">JAPSCAN</a>
+            <br />
+            <a
+              :href="result.url"
+              target="_blank"
+              style="text-decoration: none"
+              title="Voir sur JAPSCAN"
+              >JAPSCAN</a
+            >
           </p>
         </div>
       </div>
     </div>
-
   </div>
 </template>
 
@@ -39,13 +59,21 @@ export default {
   },
   created: async function () {
     this.searchName = this.$route.params.name
-    let searchResult = await fetch(`${URL_BACKEND}/japscan/searchManga/${this.searchName}`)
+    let searchResult = await fetch(
+      `${URL_BACKEND}/japscan/searchManga/${this.searchName}`
+    )
     searchResult = await searchResult.text()
     searchResult = JSON.parse(searchResult)
 
-    searchResult.forEach(e => {
+    searchResult.forEach((e) => {
       const name = e.url.substring('/manga/'.length, e.url.length - 1)
-      this.searchResult.push({ displayName: e.name, name: name, url: `https://www.japscan.co${e.url}`, img: `https://www.japscan.co/imgs/mangas/${name}.jpg`, mangakas: e.mangakas })
+      this.searchResult.push({
+        displayName: e.name,
+        name: name,
+        url: `https://www.japscan.ws${e.url}`,
+        img: `https://www.japscan.ws/imgs/mangas/${name}.jpg`,
+        mangakas: e.mangakas
+      })
     }) // img => 180x250
   }
 }
@@ -75,9 +103,13 @@ export default {
 }
 
 @media (min-width: 600px) {
-  .cards { grid-template-columns: repeat(2, 1fr); }
+  .cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 @media (min-width: 900px) {
-  .cards { grid-template-columns: repeat(4, 1fr); }
+  .cards {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 </style>

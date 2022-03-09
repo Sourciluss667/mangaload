@@ -1,4 +1,5 @@
 const fetch = require('node-fetch')
+const config = require('../config.js')
 
 /**
  * @param {import('express').Request} req
@@ -7,7 +8,7 @@ const fetch = require('node-fetch')
 async function searchManga (req, res) {
   const name = req.params.name
 
-  const requestResult = await fetch("https://www.japscan.co/live-search/", {
+  const requestResult = await fetch(config.JAPSCAN_URL + "/live-search/", {
     "headers": {
       "accept": "*/*",
       "accept-language": "fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7",
