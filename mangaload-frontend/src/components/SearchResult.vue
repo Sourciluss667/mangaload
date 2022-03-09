@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import { URL_BACKEND } from '../config.js'
+import { URL_BACKEND, JAPSCAN_URL } from '../config.js'
 
 export default {
   name: 'SearchResult',
@@ -70,8 +70,8 @@ export default {
       this.searchResult.push({
         displayName: e.name,
         name: name,
-        url: `https://www.japscan.ws${e.url}`,
-        img: `https://www.japscan.ws/imgs/mangas/${name}.jpg`,
+        url: `${JAPSCAN_URL}${e.url}`,
+        img: `${JAPSCAN_URL}/imgs/mangas/${name}.jpg`,
         mangakas: e.mangakas
       })
     }) // img => 180x250
